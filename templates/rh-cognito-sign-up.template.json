@@ -1,0 +1,77 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+      "StackEnv": {
+        "Type": "String",
+        "Default": "dev",
+        "Description": "Specifies the target environment for stack deployment"
+      }
+    },
+  "Metadata": {
+    "StackName": "RHStack"
+  },
+  "Resources": {
+    "RHLambdaCognitoSignUpRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Join": [ "", [{ "Ref": "StackEnv" }, "RHLambdaCognitoSignUpRole"] ]
+        },
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "lambda.amazonaws.com"
+              ]
+            },
+            "Action": [
+              "sts:AssumeRole"
+            ]
+          }
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": {
+                "Action": "cognito-idp:SignUp",
+                "Effect": "Allow",
+                "Resource": "*"
+              }
+            },
+            "PolicyName": "RHCognitoSignUp"
+          }
+        ]
+      }
+    },
+    "DevRHSignUpLambda": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": [
+        "RHLambdaCognitoSignUpRole"
+      ],
+      "Properties": {
+        "FunctionName": {
+          "Fn::Join": [ "-", [{ "Ref": "StackEnv" }, "rh-sign-up-lambda"] ]
+        },
+        "Role": {
+          "Fn::GetAtt": [ "RHLambdaCognitoSignUpRole", "Arn" ]
+        },
+        "Code": {
+          "S3Bucket": "rh-configuration-resources",
+          "S3Key": "lambdas/rh-cognito-sign-up-2272018.zip"
+        },
+        "Handler": "rh-cognito-sign-up.handler",
+        "MemorySize": 128,
+        "Runtime": "nodejs6.10",
+        "Timeout": 10,
+        "Environment": {
+          "Variables": {
+            "CLIENT_ID": "14idvaikjll479k7vg5g0vp99"
+          }
+        }
+      }
+    }
+  }
+}

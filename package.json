@@ -1,0 +1,13 @@
+{
+  "name": "respectful-heart-backend",
+  "version": "0.1.0",
+  "author": "Adam Fitzpatrick",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.202.0"
+  }
+}
