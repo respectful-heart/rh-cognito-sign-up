@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build": "echo no build required"
   },
   "devDependencies": {
     "aws-sdk": "^2.202.0"
